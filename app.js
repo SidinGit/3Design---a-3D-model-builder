@@ -1,6 +1,10 @@
+// Wait for the DOM content to be fully loaded before executing the script
 document.addEventListener("DOMContentLoaded", function () {
+    // Get the canvas element
     var canvas = document.getElementById("renderCanvas");
+    // Create a Babylon.js engine
     var engine = new BABYLON.Engine(canvas, true);
+    // Initialize variables to store button elements and other scene elements
     var firstPointMesh = null;
     var selectedMesh = null;
     var moveButton = document.getElementById("moveButton"); // Store the move button element
@@ -11,16 +15,17 @@ document.addEventListener("DOMContentLoaded", function () {
     var ground = null;
     var scene = null;
     var camera = null;
-    var drawMode = false;
-    var drawPoints = [];
-    var lines = [];
-    var moveMode = false;
+    var drawMode = false; // Flag to indicate if in drawing mode
+    var drawPoints = []; // Store points drawn by the user
+    var lines = []; // Store lines created from drawn points
+    var moveMode = false; // Flag to indicate if in move mode
 
     // Disable all buttons except Draw button initially
     extrudeButton.disabled = true;
     moveButton.disabled = true;
     exitMoveButton.disabled = true;
     vertexEditButton.disabled = true;
+    // Function to create the Babylon.js scene
     var createScene = function () {
         scene = new BABYLON.Scene(engine);
 
@@ -39,6 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5);
         ground.material.specularColor = new BABYLON.Color3(0, 0, 0); // Disable light reflection on the ground
 
+        // Function to enter drawing mode
         function enterDrawMode() {
             drawMode = true;
             drawPoints = [];
@@ -62,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
             exitMoveButton.disabled = true;
         }
 
+        // Function to enter move mode
         function enterMoveMode() {
             moveMode = true;
             selectedMesh = null;
@@ -91,6 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
             exitMoveButton.classList.add("bright");
         }
 
+        // Function to exit move mode
         function exitMoveMode() {
             moveMode = false;
             // Enable camera rotation control
@@ -102,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
             exitMoveButton.classList.remove("bright");
         }
 
+        // Event listener for left-click to draw
         canvas.addEventListener("pointerdown", function (event) {
             if (drawMode && event.button === 0) { // Check for left-click event
                 var pickResult = scene.pick(scene.pointerX, scene.pointerY);
@@ -133,6 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
+        // Event listener for right-click to end drawing
         canvas.addEventListener("pointerdown", function (event) {
             event.preventDefault();
             if (drawMode && event.button === 2) {
@@ -159,6 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
+        // Event listener for draw button click
         drawButton.addEventListener("click", function () {
             
             if (drawMode) {
@@ -173,6 +184,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
+        // Event listener for extrude button click
         extrudeButton.addEventListener("click", function () {
             
             if (drawPoints.length > 1) {
@@ -204,6 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
+        // Event listener for move button click
         moveButton.addEventListener("click", function () {
             if (!moveMode) {
                 enterMoveMode();
@@ -212,6 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
             drawButton.disabled=true;
         });
 
+        // Event listener for exit move button click
         exitMoveButton.addEventListener("click", function () {
             if (moveMode) {
                 drawButton.disabled=false;
@@ -225,12 +239,14 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
+        // Event listener for pointer down event to select mesh in move mode
         scene.onPointerDown = function (evt, pickResult) {
             if (moveMode && pickResult.hit) {
                 selectedMesh = pickResult.pickedMesh;
             }
         };
 
+        // Event listener for pointer move event to move selected mesh in move mode
         scene.onPointerMove = function (evt) {
             if (moveMode && selectedMesh) {
                 var pickResult = scene.pick(scene.pointerX, scene.pointerY);
@@ -241,6 +257,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         };
 
+        // Event listener for pointer up event to release selected mesh in move mode
         scene.onPointerUp = function (evt) {
             if (moveMode) {
                 selectedMesh = null;
@@ -248,12 +265,15 @@ document.addEventListener("DOMContentLoaded", function () {
         };
     };
 
+    // Create the scene
     createScene();
 
+    // Run the render loop
     engine.runRenderLoop(function () {
         scene.render();
     });
 
+    // Resize the engine when the window is resized
     window.addEventListener("resize", function () {
         engine.resize();
     });
