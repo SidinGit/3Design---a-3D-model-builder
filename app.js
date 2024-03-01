@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
     var drawButton = document.getElementById("drawButton"); // Store the draw button element
     var extrudeButton = document.getElementById("extrudeButton"); // Store the extrude button element
     var exitMoveButton = document.getElementById("exitMoveButton"); // Store the exit move button element
+    var vertexEditButton = document.getElementById("vertexEditButton"); // Store the vertex edit button element
+    var instructions = document.getElementById("instructions"); // Store the instructions element
     var previousObjects = []; // Store previously drawn objects
     var ground = null;
     var scene = null;
@@ -19,21 +21,22 @@ document.addEventListener("DOMContentLoaded", function () {
     var drawPoints = []; // Store points drawn by the user
     var lines = []; // Store lines created from drawn points
     var moveMode = false; // Flag to indicate if in move mode
+    var wireframeMode = false; // Flag to indicate if in wireframe mode
 
     // Disable all buttons except Draw button initially
     extrudeButton.disabled = true;
     moveButton.disabled = true;
     exitMoveButton.disabled = true;
-    vertexEditButton.disabled = true;
+    vertexEditButton.disabled=true;
     // Function to create the Babylon.js scene
     var createScene = function () {
         scene = new BABYLON.Scene(engine);
 
         // Camera setup
-        camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 4, 10, BABYLON.Vector3.Zero(), scene);
+        camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 4, 15, BABYLON.Vector3.Zero(), scene);
         camera.lowerRadiusLimit = 5; // Limit camera distance
-        camera.upperRadiusLimit = 15;
-        camera.attachControl(canvas, false); // Disable camera controls during drawing
+        camera.upperRadiusLimit = 30;
+        camera.attachControl(canvas, true); // Enable camera controls
 
         // Light setup
         var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
@@ -62,12 +65,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 firstPointMesh.dispose();
                 firstPointMesh = null;
             }
+            //remove 2D
+            if (sketchMesh) {
+                sketchMesh.dispose();
+                sketchMesh = null;
+            }
             // Disable other buttons during drawing
             extrudeButton.disabled = true;
             moveButton.disabled = true;
             exitMoveButton.disabled = true;
+            vertexEditButton.disabled = true;
+            instructions.innerText = "Click to draw points on the ground plane. Right-click to complete drawing.";
         }
-
         // Function to enter move mode
         function enterMoveMode() {
             moveMode = true;
@@ -78,17 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
             camera.inputs.attached.pointers.detachControl(canvas);
             camera.inputs.attached.keyboard.detachControl(canvas);
 
-            // Clear drawing points and lines
-            drawPoints = [];
-            lines.forEach(function(line) {
-                line.dispose();
-            });
-            lines = [];
-            if (firstPointMesh) {
-                firstPointMesh.dispose();
-                firstPointMesh = null;
-            }
-            // Clear the 2D sketch mesh
+            // removing the 2D sketch
             if (sketchMesh) {
                 sketchMesh.dispose();
                 sketchMesh = null;
@@ -96,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Enable exit move button
             exitMoveButton.disabled = false;
             exitMoveButton.classList.add("bright");
+            instructions.innerText = "Click and drag to move selected object on the ground plane.";
         }
 
         // Function to exit move mode
@@ -107,10 +107,102 @@ document.addEventListener("DOMContentLoaded", function () {
             camera.inputs.attached.keyboard.attachControl(canvas);
             // Disable exit move button
             exitMoveButton.disabled = true;
+            vertexEditButton.disabled=false;
             exitMoveButton.classList.remove("bright");
+            instructions.innerText = "Select an object to move or enter drawing mode.";
         }
+        
 
-        // Event listener for left-click to draw
+        function toggleWireframeMode() {
+            scene.meshes.forEach(function(mesh) {
+                if (mesh !== ground) {
+                    mesh.renderingGroupId = wireframeMode ? 0 : 1; // Switch rendering group to show wireframe on top
+                    if (mesh.material) {
+                        mesh.material.wireframe = wireframeMode;
+                    }
+                    // Dispose sketch mesh
+                    if (sketchMesh) {
+                        sketchMesh.dispose();
+                        sketchMesh = null;
+                    }
+                    mesh.getChildMeshes().forEach(function(child) {
+                        if (child.name === "vertexPoint") {
+                            child.dispose();
+                        }
+                    });
+                }
+            });
+        }
+        function toggleBackTo3DMode() {
+            wireframeMode = false; // Set wireframe mode to false
+            toggleWireframeMode(); // Call the toggleWireframeMode function to switch back to 3D mode
+        }
+        
+        moveButton.addEventListener("click", function () {
+            if (!moveMode) {
+                enterMoveMode();
+            }
+            moveButton.disabled = true;
+            drawButton.disabled = true;
+            vertexEditButton.disabled = true;
+            if (wireframeMode) {
+                toggleBackTo3DMode(); // Toggle back to 3D mode if currently in wireframe mode
+            }
+        });
+    
+        //Event listener for vertex edit button click
+        vertexEditButton.addEventListener("click", function () {
+            vertexEditButton.disabled=true;
+            if (wireframeMode) {
+                // Add pointer move event listener for vertex proximity feedback
+                scene.onPointerMove = function (evt) {
+                    var pickResult = scene.pick(scene.pointerX, scene.pointerY);
+                    if (pickResult.hit && pickResult.pickedMesh && pickResult.pickedMesh.name === "mainMesh") {
+                        var vertices = pickResult.pickedMesh.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+                        if (vertices) {
+                            var closestDistance = Number.MAX_VALUE;
+                            var pointerPosition = pickResult.getNormal(true);
+                            for (var i = 0; i < vertices.length; i += 3) {
+                                var vertexPosition = new BABYLON.Vector3(vertices[i], vertices[i + 1], vertices[i + 2]);
+                                var distance = BABYLON.Vector3.Distance(vertexPosition, pointerPosition);
+                                if (distance < closestDistance) {
+                                    closestDistance = distance;
+                                }
+                            }
+                            if (closestDistance < 0.3) { // Adjust the threshold distance as needed
+                                // Provide feedback when pointer is close to vertex
+                                console.log("Close to a vertex!");
+                            } else {
+                                // Clear feedback when pointer is not close to vertex
+                                console.log("Not close to a vertex.");
+                            }
+                        }
+                    }
+                };
+            } 
+        });
+        // Event listener for vertex edit button click
+        vertexEditButton.addEventListener("click", function () {
+
+            // If in move mode, switch to vertex edit mode
+            if (moveMode) {
+                moveMode = false; // Exit move mode
+                drawButton.disabled = false; // Enable draw button
+                exitMoveMode(); // Exit move mode
+            }
+
+            // If in vertex edit mode, enable vertex proximity feedback
+            if (!moveMode && wireframeMode) {
+                // Function to handle pointer move event
+                canvas.addEventListener("pointermove", function (event) {
+                    var pickInfo = scene.pick(scene.pointerX, scene.pointerY);
+                    console.log(pickInfo);
+                });
+            }
+        });
+
+
+        // Event listener for pointer down to draw points
         canvas.addEventListener("pointerdown", function (event) {
             if (drawMode && event.button === 0) { // Check for left-click event
                 var pickResult = scene.pick(scene.pointerX, scene.pointerY);
@@ -142,7 +234,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // Event listener for right-click to end drawing
+        // Event listener for right-click to complete drawing
         canvas.addEventListener("pointerdown", function (event) {
             event.preventDefault();
             if (drawMode && event.button === 2) {
@@ -154,24 +246,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     extrudeButton.disabled = false;
                     extrudeButton.classList.add("bright");
                 }
-                // Adjust camera to fit the drawing plane
-                if (drawPoints.length > 0) {
-                    var bbox = new BABYLON.BoundingBoxGenerator();
-                    bbox.update(drawPoints);
-                    var boundingBox = bbox.boundingBox;
-                    var center = boundingBox.center;
-                    var halfExtents = boundingBox.extendSize.scale(0.5);
-                    var width = Math.max(halfExtents.x, halfExtents.z) * 2;
-                    var height = Math.max(halfExtents.x, halfExtents.z) * 2;
-                    var distance = Math.max(width, height) / Math.tan(camera.fov / 2);
-                    BABYLON.Animation.CreateAndStartAnimation('cameraFollowMouse', camera, 'position', 60, 120, camera.position, center.add(new BABYLON.Vector3(0, distance, 0)), BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-                }
             }
         });
 
         // Event listener for draw button click
         drawButton.addEventListener("click", function () {
-            
+            // removing the 2D sketch
             if (drawMode) {
                 // If draw mode is already active, switch to move mode
                 drawMode = false;
@@ -179,14 +259,13 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 enterDrawMode();
             }
-            if(extrudeButton){
-                drawButton.disabled=true;
+            if (extrudeButton) {
+                drawButton.disabled = true;
             }
         });
 
         // Event listener for extrude button click
         extrudeButton.addEventListener("click", function () {
-            
             if (drawPoints.length > 1) {
                 drawPoints.push(drawPoints[0].clone());
                 var shape = BABYLON.MeshBuilder.CreatePolygon("polygon", { shape: drawPoints }, scene);
@@ -199,21 +278,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 extrudedShape.position.y = extrusionHeight; // Adjust position to stay above the ground
                 extrudedShape.material = new BABYLON.StandardMaterial("extrudedShapeMat", scene);
                 extrudedShape.material.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
-
+                
+                // Clear drawing points and lines
                 drawPoints = [];
                 lines.forEach(function(line) {
                     line.dispose();
                 });
                 lines = [];
+                if (firstPointMesh) {
+                    firstPointMesh.dispose();
+                    firstPointMesh = null;
+                }
 
                 extrudeButton.disabled = true;
-                drawButton.disabled=false;
+                drawButton.disabled = false;
+                vertexEditButton.disabled=false;
                 extrudeButton.classList.remove("bright");
                 moveButton.disabled = false; // Enable the Move button after extrusion
                 moveButton.classList.add("bright"); // Highlight the Move button
                 // Store the extruded shape for future reference
                 previousObjects.push(extrudedShape);
-            }
+                }
         });
 
         // Event listener for move button click
@@ -221,14 +306,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!moveMode) {
                 enterMoveMode();
             }
-            moveButton.disabled=true;
-            drawButton.disabled=true;
+            moveButton.disabled = true;
+            drawButton.disabled = true;
+            vertexEditButton.disabled=true;
         });
 
         // Event listener for exit move button click
         exitMoveButton.addEventListener("click", function () {
             if (moveMode) {
-                drawButton.disabled=false;
+                drawButton.disabled = false;
                 moveButton.disabled = false;
                 exitMoveMode();
             } else {
@@ -237,6 +323,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 moveButton.disabled = true;
                 exitMoveButton.disabled = true;
             }
+        });
+
+        // Event listener for vertex edit button click
+        vertexEditButton.addEventListener("click", function () {
+            wireframeMode = !wireframeMode;
+            toggleWireframeMode();
         });
 
         // Event listener for pointer down event to select mesh in move mode
