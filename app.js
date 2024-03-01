@@ -23,6 +23,27 @@ document.addEventListener("DOMContentLoaded", function () {
     var moveMode = false; // Flag to indicate if in move mode
     var wireframeMode = false; // Flag to indicate if in wireframe mode
 
+    // Get reference to the paragraph element
+    var innerTextElement = document.getElementById('instructions');
+    // Add click event listener to button 1
+    drawButton.addEventListener('click', function() {
+        innerTextElement.innerText = "Left-click to add points amd Right-click to complete. \n\n Click Extrude after right-click "; // Change the inner text to Text 1
+    });
+    extrudeButton.addEventListener('click', function() {
+        innerTextElement.innerText = "Click Vertex to see and edit the 3D shape \n Click Move to move the 3D object"; // Change the inner text to Text 1
+    });
+    vertexEditButton.addEventListener('click', function() {
+        innerTextElement.innerText = "Click Move to move the 3D object "; // Change the inner text to Text 1
+    });
+    moveButton.addEventListener('click', function() {
+        innerTextElement.innerText = "Click Exit to exit from move mode"; // Change the inner text to Text 1
+    });
+    exitMoveButton.addEventListener('click', function() {
+        innerTextElement.innerText = "Now you can \n 1. Draw \n 2. Extrude \n 3. Edit and \n 4. Move "; // Change the inner text to Text 1
+    });
+
+
+
     // Disable all buttons except Draw button initially
     extrudeButton.disabled = true;
     moveButton.disabled = true;
@@ -46,7 +67,6 @@ document.addEventListener("DOMContentLoaded", function () {
         ground.material = new BABYLON.StandardMaterial("groundMat", scene);
         ground.material.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5);
         ground.material.specularColor = new BABYLON.Color3(0, 0, 0); // Disable light reflection on the ground
-
         // Function to enter drawing mode
         function enterDrawMode() {
             drawMode = true;
@@ -75,7 +95,6 @@ document.addEventListener("DOMContentLoaded", function () {
             moveButton.disabled = true;
             exitMoveButton.disabled = true;
             vertexEditButton.disabled = true;
-            instructions.innerText = "Click to draw points on the ground plane. Right-click to complete drawing.";
         }
         // Function to enter move mode
         function enterMoveMode() {
@@ -95,7 +114,6 @@ document.addEventListener("DOMContentLoaded", function () {
             // Enable exit move button
             exitMoveButton.disabled = false;
             exitMoveButton.classList.add("bright");
-            instructions.innerText = "Click and drag to move selected object on the ground plane.";
         }
 
         // Function to exit move mode
@@ -109,7 +127,6 @@ document.addEventListener("DOMContentLoaded", function () {
             exitMoveButton.disabled = true;
             vertexEditButton.disabled=false;
             exitMoveButton.classList.remove("bright");
-            instructions.innerText = "Select an object to move or enter drawing mode.";
         }
         
 
@@ -369,4 +386,5 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("resize", function () {
         engine.resize();
     });
+    
 });
