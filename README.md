@@ -51,6 +51,7 @@ cd <project-directory>
 - Click the "Vertex Edit" button to enter vertex edit mode and edit the vertices of the 3D object.
 - While in vertex edit mode, click and drag the vertices to modify the shape of the 3D object.
 - Click the "Exit Move" button to exit move mode and return to the default state.
+  **Note - Vertex Edit Mode is still under progress to avail the functionality of editing vertices and changing the 3D shape
 
 ## Contributing
 
