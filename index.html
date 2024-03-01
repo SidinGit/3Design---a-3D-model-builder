@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw, Extrude, and Move Shapes</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <button id="drawButton">Draw</button>
+    <button id="extrudeButton" disabled>Extrude</button>
+    <button id="moveButton">Move</button>
+    <button id="exitMoveButton" class="button">Exit Move Mode</button>
+    <button id="vertexEditButton">Vertex Edit</button>
+    <div id="instructions">Click and drag to edit vertices</div>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/earcut/dist/earcut.min.js"></script>
+    <script src="app.js" defer></script>
+</body>
+</html>
