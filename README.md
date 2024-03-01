@@ -47,9 +47,9 @@ cd <project-directory>
 
 - To draw a shape, click the "Draw" button and then click on the canvas to draw points. Right-click to complete the drawing.
 - Click the "Extrude" button to extrude the drawn shape into a 3D object.
-- Click the "Move" button to enter move mode and move the selected object on the ground plane. <br>*Note - Vertex Edit Mode is still in progress to avail the functionality of editing vertices and changing the 3D shape.
-- Click the "Vertex Edit" button to enter vertex edit mode and edit the vertices of the 3D object. <br>**Note - For now, clicking on the Vertex Edit button will show you the wireframe structure of the 3D shape.
-- While in vertex edit mode, click and drag the vertices to modify the shape of the 3D object. <br>We plan to achieve this in the future
+- Click the "Move" button to enter move mode and move the selected object on the ground plane. 
+- Click the "Vertex Edit" button to enter vertex edit mode and edit the vertices of the 3D object. <br>*Note - For now, clicking on the Vertex Edit button will show you the wireframe structure of the 3D shape.
+- While in vertex edit mode, click and drag the vertices to modify the shape of the 3D object. <br>We plan to achieve this in the future. <br>**Note - Vertex Edit Mode is still in progress to avail the functionality of editing vertices and changing the 3D shape.
 - Click the "Exit Move" button to exit move mode and return to the default state.
 
 
