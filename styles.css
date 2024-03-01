@@ -7,6 +7,7 @@ body, html {
 }
 
 canvas {
+    align-self: center;
     width: 100%;
     height: 100%;
     touch-action: none;
@@ -43,11 +44,17 @@ canvas {
 }
 
 #instructions {
-    top: 130px;
-    left: 10px;
-    color: white;
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
     font-family: Arial, sans-serif;
-    font-size: 14px;
+    height: 50px; /* Height of the instructions header */
+    color: white;
+    text-align: center;
+    padding-top: 30px; /* Adjust top padding for vertical centering */
+    box-sizing: border-box;
+    font-size: 30px;
 }
 
-  
