@@ -27,19 +27,19 @@ document.addEventListener("DOMContentLoaded", function () {
     var innerTextElement = document.getElementById('instructions');
     // Add click event listener to button 1
     drawButton.addEventListener('click', function() {
-        innerTextElement.innerText = "Left-click to add points amd Right-click to complete. \n\n Click Extrude after right-click "; // Change the inner text to Text 1
+        innerTextElement.innerText = "Left-click to add points amd Right-click to complete. \n\n Click Extrude after right-click "; 
     });
     extrudeButton.addEventListener('click', function() {
-        innerTextElement.innerText = "Click Vertex to see and edit the 3D shape \n Click Move to move the 3D object"; // Change the inner text to Text 1
+        innerTextElement.innerText = "Click Vertex to see and edit the 3D shape \n Click Move to move the 3D object"; 
     });
     vertexEditButton.addEventListener('click', function() {
-        innerTextElement.innerText = "Click Move to move the 3D object "; // Change the inner text to Text 1
+        innerTextElement.innerText = "Click Move to move the 3D object "; 
     });
     moveButton.addEventListener('click', function() {
-        innerTextElement.innerText = "Click Exit to exit from move mode"; // Change the inner text to Text 1
+        innerTextElement.innerText = "Click Exit to exit from move mode"; 
     });
     exitMoveButton.addEventListener('click', function() {
-        innerTextElement.innerText = "Now you can \n 1. Draw \n 2. Extrude \n 3. Edit and \n 4. Move "; // Change the inner text to Text 1
+        innerTextElement.innerText = "Now you can \n 1. Draw \n 2. Extrude \n 3. Edit and \n 4. Move "; 
     });
 
 
