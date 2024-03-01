@@ -1,3 +1,4 @@
+
 body, html {
     margin: 0;
     padding: 0;
@@ -11,7 +12,7 @@ canvas {
     touch-action: none;
 }
 
-#drawButton, #extrudeButton, #moveButton, #exitMoveButton, #vertexEditButton {
+#drawButton, #extrudeButton, #moveButton, #exitMoveButton, #vertexEditButton, #instructions {
     position: absolute;
     z-index: 1;
 }
@@ -40,3 +41,13 @@ canvas {
     top: 50px; 
     left: 90px;
 }
+
+#instructions {
+    top: 130px;
+    left: 10px;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+  
