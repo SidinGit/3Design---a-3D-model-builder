@@ -1,0 +1,64 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+canvas {
+  align-self: center;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+#drawMode,
+#extrudeMode,
+#moveMode,
+#exitMoveMode,
+#vertexEditMode,
+#instructions {
+  position: absolute;
+  z-index: 1;
+}
+
+#drawMode {
+  top: 10px;
+  left: 10px;
+}
+
+#extrudeMode {
+  top: 50px;
+  left: 10px;
+}
+
+#moveMode {
+  top: 90px;
+  left: 10px;
+}
+
+#exitMoveMode {
+  top: 90px;
+  left: 70px;
+}
+
+#vertexEditMode {
+  top: 50px;
+  left: 90px;
+}
+
+#instructions {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  height: 50px; /* Height of the instructions header */
+  color: white;
+  text-align: center;
+  padding-top: 60px; /* Adjust top padding for vertical centering */
+  box-sizing: border-box;
+  font-size: 30px;
+}
