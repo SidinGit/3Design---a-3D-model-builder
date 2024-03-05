@@ -24,7 +24,7 @@ var shapesToExtrude = [];
 var innerTextElement = document.getElementById('instructions');
 innerTextElement.innerText = "Draw, Extrude, Edit Vertices and Move \n\n Hint : Click Draw"; 
 // Step 0: Background color
-//scene.clearColor = new BABYLON.Color3(0.3, 0.4, 0.5);
+scene.clearColor = new BABYLON.Color3(0.3, 0.4, 0.5);
 // Light setup
 var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
 // Step 1: Create a ground
